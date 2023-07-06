@@ -1,3 +1,4 @@
 pyparsing
 pandas
 streamlit
+openpyxl
