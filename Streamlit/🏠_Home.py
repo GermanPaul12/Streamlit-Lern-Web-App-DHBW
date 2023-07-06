@@ -75,11 +75,11 @@ if "q_no_temp" not in st.session_state:
 # ---------------- Main page ----------------
 
 tab1, tab2 = st.tabs(["Flashcards", "Search engine"])
-match fach:
-    case "IT":
-        rows = pd.read_excel("data/Wiederholungsfragen_Grundlagen der IT.xlsx")
-    case "WI":    
-        rows = pd.read_excel("data/Klausurfragen.xlsx")
+
+if fach == "IT":
+    rows = pd.read_excel("data/Wiederholungsfragen_Grundlagen der IT.xlsx")
+elif fach == "WI":    
+    rows = pd.read_excel("data/Klausurfragen.xlsx")
 
 # Perform SQL query on the Google Sheet.
 # Uses st.cache to only rerun when the query changes or after 10 min.
