@@ -1,8 +1,7 @@
 import streamlit as st
 import streamlit.components.v1 as components
-from gsheetsdb import connect
 import random
-import pandas
+import pandas as pd
 
 # -------------- app config ---------------
 
@@ -37,19 +36,14 @@ with st.sidebar:
     #     <div class="badge-base LI-profile-badge" data-locale="en_US" data-size="medium" data-theme="dark" data-type="VERTICAL" data-vanity="hasiow" data-version="v1"></div>""",
     #     height=280,
     # )
-    st.caption("Tomasz Hasiów | https://tomjohn.streamlit.app/")
+    st.caption("German Paul | https://germanpaul.eu.pythonanywhere.com")
     st.write("**Questions and answers sourced from:**")
-    st.caption(" 82 Product Owner Interview Questions to Avoid Hiring Imposters")
-    st.caption("By Stefan Wolpers | Version 8.01 | 2022-01-17")
-    st.caption("https://berlin-product-people.com/")
-    st.caption(
-        "Download link: https://age-of-product.com/42-scrum-product-owner-interview-questions/"
-    )
-    st.write("Copyright notice:")
-    st.caption(
-        "No part of this publication or its text may be made publicly available or, excepting personal use, reproduced, or distributed or translated into other languages without the prior written permission of Berlin Product People GmbH. If you would like permission to reproduce or otherwise publish any part or all of this publication or its text, including translations thereof, write to us at info@berlin-product-people.com addressed “Attention: Permissions Request.”"
-    )
-    st.caption("Materials in the app used with permission of Stefan Wolpers")
+    st.caption(" Michael Greifenhard der Gott des WWI22DSB")
+    st.caption("By German Paul | Version 00.00.01 | 2023-07-07")
+    st.caption("https://github/GermanPaul12.com/")
+    
+    st.caption("Bei Github Stern da lassen sonst schepperts im Gebälk")
+    fach = st.selectbox("Choose subject", options=["WI", "IT"])
     # st.markdown(
     #     f"""
     #     <div class="bpad" id="bpad">
@@ -81,33 +75,15 @@ if "q_no_temp" not in st.session_state:
 # ---------------- Main page ----------------
 
 tab1, tab2 = st.tabs(["Flashcards", "Search engine"])
-
-
-# Create a connection object.
-conn = connect()
+match fach:
+    case "IT":
+        rows = pd.read_excel("data/Wiederholungsfragen_Grundlagen der IT.xlsx")
+    case "WI":    
+        rows = pd.read_excel("data/Klausurfragen.xlsx")
 
 # Perform SQL query on the Google Sheet.
 # Uses st.cache to only rerun when the query changes or after 10 min.
 # As seen here: https://docs.streamlit.io/knowledge-base/tutorials/databases/public-gsheet
-
-
-# @st.cache_data(ttl=600)
-@st.cache_resource
-def run_query(query):
-    rows = conn.execute(query, headers=1)
-    rows = rows.fetchall()
-    return rows
-
-
-# secrets should be secrtes. shhh don't tell anyone
-sheet_url = st.secrets["public_gsheets_url_IT"]
-
-# ok let's run the query
-rows = run_query(
-    f'SELECT * FROM "{sheet_url}"'
-)  # f string read more here if you want https://en.wikipedia.org/wiki/Python_(programming_language)#Expressions
-
-# how many rows were returned?
 
 
 with tab1:
@@ -134,12 +110,12 @@ with tab1:
         # this 'if' checks if algorithm should use value from temp or new value (temp assigment in else)
         if st.session_state.button2_clicked:
             st.markdown(
-                f'<div class="blockquote-wrapper"><div class="blockquote"><h1><span style="color:#ffffff">{rows[st.session_state.q_no_temp].Question}</span></h1><h4>&mdash; Question no. {st.session_state.q_no_temp+1}</em></h4></div></div>',
+                f'<div class="blockquote-wrapper"><div class="blockquote"><h1><span style="color:#ffffff">{rows.iloc[st.session_state.q_no_temp].Question}</span></h1><h4>&mdash; Question no. {st.session_state.q_no_temp+1}</em></h4></div></div>',
                 unsafe_allow_html=True,
             )
         else:
             st.markdown(
-                f'<div class="blockquote-wrapper"><div class="blockquote"><h1><span style="color:#ffffff">{rows[st.session_state.q_no].Question}</span></h1><h4>&mdash; Question no. {st.session_state.q_no+1}</em></h4></div></div>',
+                f'<div class="blockquote-wrapper"><div class="blockquote"><h1><span style="color:#ffffff">{rows.iloc[st.session_state.q_no].Question}</span></h1><h4>&mdash; Question no. {st.session_state.q_no+1}</em></h4></div></div>',
                 unsafe_allow_html=True,
             )
             # keep memory of question number in order to show answer
@@ -147,7 +123,7 @@ with tab1:
 
         if answer:
             st.markdown(
-                f"<div class='answer'><span style='font-weight: bold; color:#6d7284;'>Answer to question number {st.session_state.q_no_temp+1}</span><br><br>{rows[st.session_state.q_no_temp].Answer}</div>",
+                f"<div class='answer'><span style='font-weight: bold; color:#6d7284;'>Answer to question number {st.session_state.q_no_temp+1}</span><br><br>{rows.iloc[st.session_state.q_no_temp].Answer}</div>",
                 unsafe_allow_html=True,
             )
             st.session_state.button2_clicked = False
@@ -158,14 +134,13 @@ with tab1:
         '<div><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Barlow+Condensed&family=Cabin&display=swap" rel="stylesheet"></div>',
         unsafe_allow_html=True,
     )
-
 with tab2:
 
     # great use case: https://discuss.streamlit.io/t/create-a-search-engine-with-streamlit-and-google-sheets/39349
 
     # convert data to pandas dataframe
+    df = rows[:]
 
-    df = pandas.DataFrame(rows)
 
     # Use a text_input to get the keywords to filter the dataframe
     text_search = st.text_input("Search in titles, questions and answers", value="")
@@ -178,7 +153,7 @@ with tab2:
 
     # Another way to show the filtered results
     # Show the cards
-    N_cards_per_row = 2
+    N_cards_per_row = 1
     if text_search:
         for n_row, row in df_search.reset_index().iterrows():
             i = n_row % N_cards_per_row
@@ -187,17 +162,8 @@ with tab2:
                 cols = st.columns(N_cards_per_row, gap="large")
             # draw the card
             with cols[n_row % N_cards_per_row]:
-                st.caption(f"Question {row['No']:0.0f}")
                 st.caption(f"{row['Topic'].strip()}")
                 st.markdown(f"**{row['Question'].strip()}**")
                 st.markdown(f"{row['Answer'].strip()}")
                 # with st.expander("Answer"):
                 #     st.markdown(f"*{row['Answer'].strip()}*")
-                
-
-import sys
-from streamlit import cli as stcli
-
-if __name__ == '__main__':
-    sys.argv = ["streamlit", "run", "Streamlit/🏠_Home.py"]
-    sys.exit(stcli.main())                
