@@ -36,11 +36,9 @@ with st.sidebar:
     #     <div class="badge-base LI-profile-badge" data-locale="en_US" data-size="medium" data-theme="dark" data-type="VERTICAL" data-vanity="hasiow" data-version="v1"></div>""",
     #     height=280,
     # )
-    st.caption("German Paul | https://germanpaul.eu.pythonanywhere.com")
+    st.caption("German Paul | https://germanpaul.streamlit.app/")
     st.write("**Questions and answers sourced from:**")
     st.caption(" Michael Greifenhard der Gott des WWI22DSB")
-    st.caption("By German Paul | Version 00.00.01 | 2023-07-07")
-    st.caption("https://github/GermanPaul12.com/")
     
     st.caption("Bei Github Stern da lassen sonst schepperts im Gebälk")
     fach = st.selectbox("Choose subject", options=["WI", "IT"])
