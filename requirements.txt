@@ -1,4 +1,4 @@
 pyparsing
 pandas
-streamlit
+streamlit-nightly
 openpyxl
